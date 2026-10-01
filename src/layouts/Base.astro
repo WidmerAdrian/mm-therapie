@@ -12,7 +12,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
 const [fav32, fav180, logoSm, og] = await Promise.all([
   getImage({ src: logo, width: 32, height: 32, format: 'png' }),
   getImage({ src: logo, width: 180, height: 180, format: 'png' }),
-  getImage({ src: logo, width: 52, height: 52, format: 'webp' }),
+  getImage({ src: logo, width: 112, height: 112, format: 'webp' }),
   getImage({ src: portrait, width: 1200, height: 630, fit: 'cover', position: 'top', format: 'jpg', quality: 80 }),
 ]);
 const ogUrl = new URL(og.src, SITE.url).href;
@@ -60,10 +60,10 @@ const tabs = [
 </head>
 <body>
 <header class="nav" id="nav">
-<div class="nav-bar"><div class="wrap nav-in">
-<a class="brand" href={home ? '#top' : '/'} aria-label={`${SITE.name}, zur Startseite`}><span class="logo"><img src={logoSm.src} width="26" height="26" alt=""></span><span>{SITE.name}</span></a>
+<div class="wrap nav-in">
+<a class="brand" href={home ? '#top' : '/'} aria-label={`${SITE.name}, zur Startseite`}><img class="logo" src={logoSm.src} width="44" height="44" alt=""><span>{SITE.name}</span></a>
 <div class="nav-r"><a class="pill-btn" href={h('kontakt')}>Termin</a></div>
-</div></div>
+</div>
 </header>
 <slot />
 <footer class="foot"><div class="wrap"><span>© {SITE.name}, {SITE.owner}</span><nav aria-label="Rechtliches"><a href="/impressum/">Impressum</a><a href="/datenschutz/">Datenschutz</a></nav></div></footer>

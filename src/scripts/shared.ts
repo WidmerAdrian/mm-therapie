@@ -55,7 +55,8 @@ export function goTo(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
   setLock(1100);
-  scrollTo({ top: id === 'top' ? 0 : el.offsetTop - 56, behavior: RM ? 'auto' : 'smooth' });
+  const behavior: ScrollBehavior = RM ? 'auto' : 'smooth';
+  if (id === 'top') scrollTo({ top: 0, behavior }); else el.scrollIntoView({ behavior });
   history.replaceState(null, '', id === 'top' ? location.pathname : '#' + id);
 }
 tbB.addEventListener('pointerdown', (e) => { drag = true; tbB.classList.add('drag'); tbB.setPointerCapture(e.pointerId); follow(e); });
@@ -76,15 +77,14 @@ tbB.addEventListener('click', (e) => { if (e.detail) e.preventDefault(); });
 new ResizeObserver(() => setTab(act, true)).observe(tbB);
 document.fonts?.ready.then(() => setTab(act, true));
 
-/* scroll loop: nav border, tab bar mini + scroll spy, plus page hooks */
-const nav = $('#nav'), root = document.documentElement;
+/* scroll loop: tab bar mini + scroll spy, plus page hooks */
+const root = document.documentElement;
 const hooks: ((y: number, H: number) => void)[] = [];
 export const onFrame = (fn: (y: number, H: number) => void) => { hooks.push(fn); fn(scrollY, innerHeight); };
 let lastY = scrollY, tick = false;
 function frame() {
   tick = false;
   const y = scrollY, H = innerHeight;
-  nav.classList.toggle('scrolled', y > 8);
   root.classList.toggle('end', y > root.scrollHeight - H * 2);
   if (y > lastY + 6 && y > 240) tbW.classList.add('mini'); else if (y < lastY - 6 || y < 240) tbW.classList.remove('mini');
   lastY = y;
