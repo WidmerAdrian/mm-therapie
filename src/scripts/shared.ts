@@ -72,11 +72,12 @@ tbB.addEventListener('pointerup', (e) => {
 tbB.addEventListener('pointercancel', () => { drag = false; tbB.classList.remove('drag'); setTab(act, true); });
 // pointer taps are handled above; keyboard activation (detail 0) follows the href
 tbB.addEventListener('click', (e) => { if (e.detail) e.preventDefault(); });
-addEventListener('resize', () => setTab(act, true));
+// bar width changes when the call button shrinks (mini), so re-measure the lens on every size change
+new ResizeObserver(() => setTab(act, true)).observe(tbB);
 document.fonts?.ready.then(() => setTab(act, true));
 
 /* scroll loop: nav border, tab bar mini + scroll spy, plus page hooks */
-const nav = $('#nav');
+const nav = $('#nav'), root = document.documentElement;
 const hooks: ((y: number, H: number) => void)[] = [];
 export const onFrame = (fn: (y: number, H: number) => void) => { hooks.push(fn); fn(scrollY, innerHeight); };
 let lastY = scrollY, tick = false;
@@ -84,6 +85,7 @@ function frame() {
   tick = false;
   const y = scrollY, H = innerHeight;
   nav.classList.toggle('scrolled', y > 8);
+  root.classList.toggle('end', y > root.scrollHeight - H * 2);
   if (y > lastY + 6 && y > 240) tbW.classList.add('mini'); else if (y < lastY - 6 || y < 240) tbW.classList.remove('mini');
   lastY = y;
   if (onePage && Date.now() > lock && !drag) {
