@@ -1,0 +1,8 @@
+---
+interface Props { n: number; title: string }
+const { n, title } = Astro.props;
+---
+<section class="card rv">
+<div class="lgl-h"><span class="lgl-n" aria-hidden="true">{String(n).padStart(2, '0')}</span><h2>{title}</h2></div>
+<slot />
+</section>

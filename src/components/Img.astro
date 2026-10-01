@@ -1,0 +1,6 @@
+---
+import { Picture } from 'astro:assets';
+// AVIF with WebP fallback; never ship the multi-MB source PNGs.
+const { alt = '', loading = 'lazy', ...rest } = Astro.props;
+---
+<Picture alt={alt} loading={loading} decoding="async" formats={['avif']} fallbackFormat="webp" {...(rest as any)} />

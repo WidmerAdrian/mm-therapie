@@ -1,0 +1,70 @@
+---
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import logo from '../assets/img/logo.png';
+import portrait from '../assets/img/portrait.webp';
+import { SITE } from '../data/content';
+import { I } from '../data/icons';
+
+interface Props { title: string; description: string; home?: boolean; jsonld?: object[] }
+const { title, description, home = false, jsonld = [] } = Astro.props;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const [fav32, fav180, logoSm, og] = await Promise.all([
+  getImage({ src: logo, width: 32, height: 32, format: 'png' }),
+  getImage({ src: logo, width: 180, height: 180, format: 'png' }),
+  getImage({ src: logo, width: 52, height: 52, format: 'webp' }),
+  getImage({ src: portrait, width: 1200, height: 630, fit: 'cover', position: 'top', format: 'jpg', quality: 80 }),
+]);
+const ogUrl = new URL(og.src, SITE.url).href;
+const h = (id: string) => (home ? `#${id}` : `/#${id}`);
+const tabs = [
+  ['top', 'Start', I.home],
+  ['therapien', 'Therapien', I.leafT],
+  ['kasse', 'Kasse', I.shield],
+  ['ueber', 'Über mich', I.user],
+  ['kontakt', 'Kontakt', I.chatT],
+];
+---
+<!doctype html>
+<html lang="de-CH" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script is:inline>document.documentElement.className='js'</script>
+<title>{title}</title>
+<meta name="description" content={description}>
+<link rel="canonical" href={canonical}>
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#FBF7F3">
+<meta name="format-detection" content="telephone=no">
+<link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href={fav32.src} type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href={fav180.src}>
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_CH">
+<meta property="og:site_name" content={SITE.name}>
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={canonical}>
+<meta property="og:image" content={ogUrl}>
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content={`${SITE.owner} in der ${SITE.name}`}>
+<meta name="twitter:card" content="summary_large_image">
+<slot name="head" />
+{jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+</head>
+<body>
+<header class="nav" id="nav">
+<div class="nav-bar"><div class="wrap nav-in">
+<a class="brand" href={home ? '#top' : '/'} aria-label={`${SITE.name}, zur Startseite`}><span class="logo"><img src={logoSm.src} width="26" height="26" alt=""></span><span>{SITE.name}</span></a>
+<div class="nav-r"><a class="pill-btn" href={h('kontakt')}>Termin</a></div>
+</div></div>
+</header>
+<slot />
+<footer class="foot"><div class="wrap"><span>© {SITE.name}, {SITE.owner}</span><nav aria-label="Rechtliches"><a href="/impressum/">Impressum</a><a href="/datenschutz/">Datenschutz</a></nav></div></footer>
+<nav class="tb-wrap" id="tb" aria-label="Hauptnavigation"><div class="tb lg" id="tbBar"><span class="tb-lens" id="tbLens"></span>{tabs.map(([id, label, icon]) => <a href={h(id)} data-t={id}><Fragment set:html={icon} /><span>{label}</span></a>)}</div><a class="tb-call lg" href={`tel:${SITE.phone}`} aria-label={`Anrufen: ${SITE.phoneDisplay}`}><Fragment set:html={I.phone24} /></a></nav>
+<div class="toast" id="toast" role="status" aria-live="polite"><i><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><span></span></div>
+<script>import '../scripts/shared';</script>
+</body>
+</html>

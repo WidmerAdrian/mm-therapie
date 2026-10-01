@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+import LegalCard from '../components/LegalCard.astro';
+import { SITE } from '../data/content';
+import { I } from '../data/icons';
+---
+<Base title="Datenschutzerklärung | MM-Therapiepraxis Zofingen" description={`Datenschutzerklärung der ${SITE.name} in ${SITE.city}: welche Personendaten bearbeitet werden, wofür und welche Rechte Sie nach dem Schweizer Datenschutzgesetz haben.`}>
+<main class="legal">
+<div class="wrap">
+<header class="sh rv"><p class="kicker">Rechtliches</p><h1 class="h2">Datenschutz.</h1><p class="lead">Ihre Daten sind bei mir in guten Händen. <strong>Hier steht, was mit ihnen geschieht.</strong></p></header>
+<div class="lgl">
+<LegalCard n={1} title="Verantwortliche Stelle">
+<p>Verantwortlich für die Bearbeitung Ihrer Personendaten ist:</p>
+<address><b>{SITE.owner}</b><br>{SITE.name}<br>{SITE.street}, {SITE.zip} {SITE.city}<br>Telefon: <a href={`tel:${SITE.phone}`}>{SITE.phoneIntl}</a><br>E-Mail: <a href={`mailto:${SITE.emailImpressum}`}>{SITE.emailImpressum}</a></address>
+<p>Diese Datenschutzerklärung richtet sich nach dem Schweizer Bundesgesetz über den Datenschutz (DSG). Soweit im Einzelfall anwendbar, berücksichtigt sie auch die Datenschutz-Grundverordnung der EU (DSGVO).</p>
+</LegalCard>
+
+<LegalCard n={2} title="Das Wichtigste in Kürze">
+<ul>{['Diese Website setzt keine Cookies und keine Analyse- oder Tracking-Werkzeuge ein.', 'Schriftarten werden direkt von diesem Server geladen, nicht von Google oder anderen Drittanbietern.', 'Daten erhalte ich nur, wenn Sie mich anrufen, per WhatsApp schreiben oder eine E-Mail senden.', 'Einzige eingebundene Drittinhalte sind die Karte von Google Maps im Bereich Kontakt.'].map((x) => <li><Fragment set:html={I.check16} /><span>{x}</span></li>)}</ul>
+</LegalCard>
+
+<LegalCard n={3} title="Hosting und Server-Logfiles">
+<p>Diese Website wird bei Vercel gehostet. Anbieter ist die Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, USA. Vercel liefert die Seiten über ein weltweites Servernetz aus, in der Regel von einem Standort in Ihrer Nähe. Dabei können Daten in die USA übertragen werden. Vercel ist unter dem Swiss-US Data Privacy Framework zertifiziert, zusätzlich gelten die Datenschutzbestimmungen und Standardvertragsklauseln von Vercel. Mehr dazu in der <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung von Vercel</a>.</p>
+<p>Beim Aufruf dieser Website übermittelt Ihr Browser automatisch technische Informationen an die Server von Vercel. Dazu gehören die IP-Adresse, Datum und Uhrzeit des Zugriffs, die aufgerufene Seite, die zuvor besuchte Seite (Referrer), der verwendete Browser und das Betriebssystem.</p>
+<p>Diese Daten sind technisch notwendig, um die Website auszuliefern, ihre Stabilität und Sicherheit zu gewährleisten und Missbrauch zu erkennen. Sie werden nicht mit anderen Daten zusammengeführt und nach kurzer Zeit automatisch gelöscht, sofern sie nicht zur Aufklärung eines Sicherheitsvorfalls benötigt werden.</p>
+</LegalCard>
+
+<LegalCard n={4} title="Google Maps">
+<p>Im Bereich Kontakt ist eine Karte des Dienstes Google Maps eingebunden. Anbieter ist die Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland, eine Tochtergesellschaft der Google LLC, USA.</p>
+<p>Sobald die Karte geladen wird, stellt Ihr Browser eine Verbindung zu Servern von Google her. Dabei werden insbesondere Ihre IP-Adresse sowie Informationen über Ihren Browser an Google übermittelt, und Google kann Cookies setzen. Die Daten können in die USA übertragen werden. Google LLC ist unter dem Swiss-US Data Privacy Framework zertifiziert. Die Karte dient dazu, Ihnen den Weg zur Praxis einfach zu zeigen.</p>
+<p>Wenn Sie nicht möchten, dass Google über diese Website Daten erhält, können Sie Inhalte von Drittanbietern in Ihrem Browser blockieren. Weitere Informationen finden Sie in der <a href="https://policies.google.com/privacy?hl=de" target="_blank" rel="noopener">Datenschutzerklärung von Google</a>.</p>
+</LegalCard>
+
+<LegalCard n={5} title="Kontakt per Telefon, E-Mail und WhatsApp">
+<p>Wenn Sie mit mir Kontakt aufnehmen, bearbeite ich die von Ihnen mitgeteilten Angaben wie Name, Telefonnummer, E-Mail-Adresse und den Inhalt Ihrer Nachricht. Diese Daten verwende ich ausschliesslich, um Ihre Anfrage zu beantworten und Termine zu vereinbaren.</p>
+<p>Für die Kontaktaufnahme per WhatsApp gelten zusätzlich die Bestimmungen der WhatsApp Ireland Limited, eines Unternehmens der Meta-Gruppe. Dabei können Daten in die USA übertragen werden. Mehr dazu in der <a href="https://www.whatsapp.com/legal/privacy-policy-eea" target="_blank" rel="noopener">Datenschutzrichtlinie von WhatsApp</a>. Wenn Sie das nicht möchten, erreichen Sie mich gerne per Telefon oder E-Mail.</p>
+</LegalCard>
+
+<LegalCard n={6} title="Gesundheitsdaten und Behandlung">
+<p>Im Rahmen einer Behandlung bearbeite ich Angaben zu Ihrer Gesundheit, etwa Beschwerden, Befunde und den Behandlungsverlauf. Diese gelten als besonders schützenswerte Personendaten. Ich verwende sie ausschliesslich für Ihre Behandlung, deren Dokumentation und die Abrechnung.</p>
+<p>Diese Daten unterliegen der beruflichen Schweigepflicht und werden vertraulich behandelt. Sie werden nur so lange aufbewahrt, wie es für die Behandlung erforderlich ist oder gesetzliche Aufbewahrungspflichten es verlangen.</p>
+</LegalCard>
+
+<LegalCard n={7} title="Weitergabe an Dritte">
+<p>Ihre Personendaten werden nicht verkauft und nicht für Werbezwecke weitergegeben. Eine Weitergabe erfolgt nur, wenn Sie eingewilligt haben, wenn sie für die Erbringung der Leistung notwendig ist oder eine gesetzliche Pflicht besteht. Die Praxis steht in keinem direkten Kontakt mit Ihrer Zusatzversicherung. Rechnungen und Rückforderungsbelege reichen Sie selbst ein.</p>
+<p>Technische Dienstleister wie der Hosting-Anbieter Vercel oder der E-Mail-Anbieter bearbeiten Daten nur in meinem Auftrag und im erforderlichen Umfang.</p>
+</LegalCard>
+
+<LegalCard n={8} title="Ihre Rechte">
+<p>Sie haben im Rahmen des anwendbaren Datenschutzrechts insbesondere folgende Rechte:</p>
+<ul>{['Auskunft darüber, welche Personendaten ich über Sie bearbeite', 'Berichtigung unrichtiger Daten', 'Löschung Ihrer Daten, soweit keine Aufbewahrungspflicht besteht', 'Widerspruch gegen bestimmte Bearbeitungen und Widerruf einer Einwilligung', 'Herausgabe Ihrer Daten in einem gängigen elektronischen Format'].map((x) => <li><Fragment set:html={I.check16} /><span>{x}</span></li>)}</ul>
+<p>Für ein Anliegen genügt eine kurze Nachricht an <a href={`mailto:${SITE.emailImpressum}`}>{SITE.emailImpressum}</a>. Zudem können Sie sich beim <a href="https://www.edoeb.admin.ch" target="_blank" rel="noopener">Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB)</a> beschweren.</p>
+</LegalCard>
+
+<LegalCard n={9} title="Datensicherheit">
+<p>Diese Website wird ausschliesslich verschlüsselt über HTTPS ausgeliefert. Ich treffe angemessene technische und organisatorische Massnahmen, um Ihre Daten vor Verlust, Missbrauch und unbefugtem Zugriff zu schützen.</p>
+</LegalCard>
+
+<LegalCard n={10} title="Änderungen">
+<p>Ich kann diese Datenschutzerklärung jederzeit anpassen, etwa wenn sich die Website oder die rechtlichen Vorgaben ändern. Es gilt die jeweils hier veröffentlichte Fassung.</p>
+<p class="lgl-meta">Stand: Oktober 2026</p>
+</LegalCard>
+</div>
+</div>
+</main>
+</Base>

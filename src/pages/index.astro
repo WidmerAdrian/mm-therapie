@@ -1,0 +1,261 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import BodyFigure from '../components/BodyFigure.astro';
+import { getImage } from 'astro:assets';
+import portrait from '../assets/img/portrait.webp';
+import sp30 from '../assets/img/special-30.png';
+import sp15 from '../assets/img/special-15.png';
+import sp29 from '../assets/img/special-29.png';
+import sp21 from '../assets/img/special-21.png';
+import { SITE, TH, BY, MMR, ORDER, GEN, FAQ, HOURS, HOURS_TEXT, hm } from '../data/content';
+import { I } from '../data/icons';
+import '../styles/finder.css';
+
+const title = 'MM-Therapiepraxis | Massagen in der Altstadt Zofingen';
+const description = 'Massagepraxis in der Altstadt Zofingen: Triggerpunkt-Therapie, Tiefenmassage, Lymphdrainage, Dorn-Breuss und mehr. Krankenkasse anerkannt (EMR), Parkplätze vor Ort.';
+const heroImg = await getImage({ src: portrait, width: 880, height: 1100, fit: 'cover', format: 'avif' });
+
+const scrub = 'Jeder Mensch ist [einzigartig.] Ein Sportler braucht etwas anderes als ein Manager, ein Handwerker etwas anderes als ein Kind. Deshalb wird jede Therapie [auf] [Sie] [abgestimmt.]'
+  .split(/\s+/).map((w) => (/^\[.*\]$/.test(w) ? { w: w.slice(1, -1), g: true } : { w, g: false }));
+
+const specials = [
+  [sp30, 'Entspannende Kopfmassage'],
+  [sp15, 'Nackenmassage'],
+  [sp29, 'Kopf- und Gesichtsmassage bei Kerzenlicht'],
+  [sp21, 'Rückenmassage'],
+] as const;
+
+const cv = [
+  { ic: I.spine, b: 'Wirbelsäule und Gelenke', s: 'Methode nach Dorn und Breuss', p: ['Wirbelsäulen- und Gelenkbehandlung nach DORN', 'DORN Intensivseminar für Therapeuten', 'Vertiefung Dorn-Anwendung und Breuss-Massage', 'Breuss-Massage'] },
+  { ic: I.hand, b: 'Massage', s: 'Für Muskeln und Bindegewebe', p: ['Klassische Massage', 'Tiefenmassage', 'Triggerpunkt-Therapie'] },
+  { ic: I.drop, b: 'Reflexzonen und Lymphe', s: 'Sanft und ganzheitlich', p: ['Fussreflexzonenmassage|ACOMED', 'Manuelle Lymphdrainage'] },
+  { ic: I.cap, b: 'Grundlagen', s: 'Das medizinische Fundament', p: ['Medizinische Grundlagen', 'Grenzenlos Modul 1 bis 3'] },
+];
+const days = [['Mo', 1], ['Di', 2], ['Mi', 3], ['Do', 4], ['Fr', 5], ['Sa', 6], ['So', 0]] as const;
+const pad = (n: number) => String(n).padStart(2, '0');
+// timeline axis for the week bars: 06:30 to 20:00
+const AXIS = [390, 1200];
+const pct = (m: number) => ((m - AXIS[0]) / (AXIS[1] - AXIS[0])) * 100;
+const short = (m: number) => (m % 60 ? hm(m) : String(m / 60));
+const mapQ = encodeURIComponent(`${SITE.street}, ${SITE.zip} ${SITE.city}`);
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HealthAndBeautyBusiness',
+    '@id': `${SITE.url}/#praxis`,
+    name: SITE.name,
+    description,
+    url: `${SITE.url}/`,
+    image: new URL(heroImg.src, SITE.url).href,
+    telephone: SITE.phoneIntl,
+    email: SITE.email,
+    address: { '@type': 'PostalAddress', streetAddress: SITE.street, postalCode: SITE.zip, addressLocality: SITE.city, addressRegion: 'AG', addressCountry: 'CH' },
+    areaServed: { '@type': 'City', name: SITE.city },
+    geo: { '@type': 'GeoCoordinates', latitude: SITE.geo.lat, longitude: SITE.geo.lng },
+    openingHoursSpecification: Object.entries(HOURS).map(([d, [a, b]]) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][+d], opens: hm(a), closes: hm(b) })),
+    founder: { '@type': 'Person', name: SITE.owner, jobTitle: 'Berufsmasseurin' },
+    hasMap: `https://www.google.com/maps/search/?api=1&query=${mapQ}`,
+    hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Therapien und Massagen', itemListElement: TH.map((t) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: t.n, description: t.d } })) },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
+---
+<Base title={title} description={description} home jsonld={jsonld}>
+<script slot="head" is:inline>/* old WordPress URLs */(function(m){m=location.search.match(/[?&]page_id=(\d+)/);if(m&&m[1]==='3')location.replace('/datenschutz/');else if(m&&m[1]==='1319')location.replace('/impressum/')})()</script>
+<main>
+<section class="hero" id="top">
+<div class="wrap hero-g">
+<div class="hero-t">
+<p class="kicker"><Fragment set:html={I.pin} />Massagepraxis in der Altstadt Zofingen</p>
+<h1 class="h1"><span class="w" style="--i:0">Spüren</span> <span class="w" style="--i:1">Sie</span> <span class="w" style="--i:2">wieder</span><br><span class="gt w" style="--i:3">Leichtigkeit.</span></h1>
+<p class="hero-sub">Schön, dass Sie da sind. Ob bei Schmerzen oder einfach zum Entspannen: <strong>Hier darf Ihr Körper zur Ruhe kommen.</strong></p>
+<div class="hero-cta"><a class="btn btn-p" href="#kontakt">Termin vereinbaren</a><a class="btn btn-s" href="#finder">Was hilft mir? <Fragment set:html={I.chev18} /></a></div>
+<ul class="trust"><li><Fragment set:html={I.check16} />Krankenkasse anerkannt</li><li><Fragment set:html={I.check16} />Parkplätze vor Ort</li><li><Fragment set:html={I.check16} />Mo bis Fr geöffnet</li></ul>
+</div>
+<div class="hero-m" id="heroM">
+<div class="ph-in"><div class="ph" id="ph">
+<Img src={portrait} widths={[440, 660, 880, 1100]} width={1100} height={1100} sizes="(min-width: 600px) 440px, calc(100vw - 40px)" alt={`${SITE.owner} in ihrer Massagepraxis in Zofingen`} loading="eager" fetchpriority="high" />
+<div class="ph-shine"></div>
+<a class="ph-cap glass" href="#ueber"><span><b>{SITE.owner}</b><span>Berufsmasseurin mit medizinischer Ausbildung</span></span><span class="cap-go"><Fragment set:html={I.chev} /></span></a>
+</div></div>
+<div class="badge glass b1" data-depth="18"><span class="bi" style="--c:#34C759"><Fragment set:html={I.checkDraw} /></span>EMR anerkannt</div>
+</div>
+</div>
+</section>
+
+<section class="glance" aria-label="Auf einen Blick">
+<div class="wrap"><div class="bento" id="bento">
+<div class="wg wg-b" id="breathe" style="--i:0" role="button" tabindex="0" aria-label="Atemübung pausieren oder fortsetzen"><small>Kurz durchatmen</small><div class="flower" id="flower" aria-hidden="true"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i></div><div><b id="breathTxt">Einatmen</b><div class="tap" id="breathTap">Antippen zum Pausieren</div></div></div>
+<a class="wg wg-s" href="#kontakt" style="--i:1"><span class="wg-ic" id="wgPulse"><Fragment set:html={I.clock} /></span><small>Heute</small><b id="wgStatus">Mo bis Fr</b><span id="wgSub">ab 07:00 Uhr</span></a>
+<a class="wg wg-e" href="#kasse" style="--i:2"><span class="wg-ic"><Fragment set:html={I.check18} /></span><small>Krankenkasse</small><b>EMR anerkannt</b><span>ZSR-Nr. {SITE.zsr}</span></a>
+<a class="wg wg-p" href="#kontakt" style="--i:3"><span class="wg-ic" aria-hidden="true">P</span><small>Anreise</small><b>Parkplätze genügend vorhanden</b><span>{SITE.street}, {SITE.zip} {SITE.city}</span></a>
+</div></div>
+</section>
+
+<section class="statement" aria-label="Unser Ansatz"><div class="wrap"><p class="scrub" id="scrub">{scrub.map((x, i) => <>{i > 0 && ' '}<span class:list={{ g: x.g }}>{x.w}</span></>)}</p></div></section>
+
+<section class="sec bg2" id="finder">
+<div class="wrap">
+<header class="sh rv"><p class="kicker">Beschwerden-Finder</p><h2 class="h2">Wo spüren <span class="gt">Sie es?</span></h2><p class="lead">Tippen Sie auf die Stelle am Körper. <strong>Wir zeigen Ihnen, was helfen kann.</strong></p></header>
+<div class="ff" id="ff" data-view="front">
+<div class="ff-card" id="ffCard">
+<div class="ff-aura" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="ff-seg" role="group" aria-label="Ansicht wählen"><span class="ff-seg-l"></span><button type="button" data-v="front" aria-pressed="true">Vorne</button><button type="button" data-v="back" aria-pressed="false">Hinten</button></div>
+<div class="ff-stage" id="ffStage">
+<div class="ff-fig" data-fig="front"><BodyFigure view="front" /><span class="ff-hint" aria-hidden="true"><i></i><b>Hier tippen</b></span></div>
+<div class="ff-fig" data-fig="back" hidden><BodyFigure view="back" /><span class="ff-hint" aria-hidden="true"><i></i><b>Hier tippen</b></span></div>
+</div>
+<div class="ff-pill" aria-hidden="true"><Fragment set:html={I.tap} />Auf eine Stelle tippen</div>
+</div>
+<div class="ff-side" id="ffSide">
+<div class="ff-pick"><div class="ff-pk-h"><span class="ff-pk-ic"><Fragment set:html={I.tap} /></span><span><b>Wo tut es weh?</b><small>Zeigen Sie auf eine Stelle, sie leuchtet am Körper auf.</small></span></div><div class="ff-pk-g">{ORDER.map((id, i) => <button type="button" class="ff-pk" style={`--i:${i}`} data-pick={id} data-pv={MMR[id].v!.join(' ')} hidden={!MMR[id].v!.includes('front')}><span class="ff-pk-n">{pad(i + 1)}</span><span class="ff-pk-l"><b>{MMR[id].n}</b><small>{MMR[id].s[0]}</small></span></button>)}</div></div>
+<div class="ff-insp" id="ffSideInsp" role="region"></div>
+</div>
+<div class="ff-zc"><span class="ff-lbl">Oder Stelle wählen</span><div class="ff-chips">{ORDER.map((id, i) => <button type="button" class="ff-chip z" style={`--i:${i}`} data-pick={id} data-pv={MMR[id].v!.join(' ')} aria-pressed="false" hidden={!MMR[id].v!.includes('front')}><b>{pad(i + 1)}</b>{MMR[id].n}</button>)}</div></div>
+<div class="ff-gen"><span class="ff-lbl">Oder eher allgemein?</span><div class="ff-chips">{GEN.map((id, i) => <button type="button" class="ff-chip" style={`--i:${i}`} data-pick={id} aria-pressed="false">{MMR[id].n}</button>)}</div></div>
+</div>
+{[...ORDER, ...GEN].map((id) => {
+  const R = MMR[id];
+  return (
+    <template id={`ffz-${id}`} data-name={R.n}>
+      <div class="ff-grip">
+        <span class="ff-grab" aria-hidden="true"></span>
+        <div class="ff-ih"><span class="ff-num">{R.g ? <Fragment set:html={I.ck18} /> : pad(ORDER.indexOf(id) + 1)}</span><div class="ff-it"><b>{R.n}</b><small>{R.t.length} passende Behandlungen</small></div>
+          {!R.g && <div class="ff-nav"><button type="button" class="ff-ib" data-step="-1" aria-label="Vorherige Stelle"><Fragment set:html={I.chevL18} /></button><button type="button" class="ff-ib" data-step="1" aria-label="Nächste Stelle"><Fragment set:html={I.chevR18} /></button></div>}
+          <button type="button" class="ff-ib" data-ffclose aria-label="Schliessen"><Fragment set:html={I.x} /></button></div>
+      </div>
+      <div class="ff-body">
+        <div class="ff-lbl">Typische Beschwerden</div>
+        <ul class="ff-sym">{R.s.map((s, i) => <li style={`--i:${i}`}><Fragment set:html={I.ck18} /><span>{s}</span></li>)}</ul>
+        <div class="ff-lbl">Das kann Ihnen helfen</div>
+        <div class="ff-tr">{R.t.map((t, i) => <button type="button" class="ff-trc" data-open={t} style={`--c:${BY[t].c};--i:${i}`}><Img src={BY[t].img} width={88} height={88} alt="" /><span><b>{BY[t].n}</b><small>{i === 0 ? 'Passt besonders gut' : 'Passt gut'}</small></span><Fragment set:html={I.chevR18} /></button>)}</div>
+        <p class="ff-tip"><Fragment set:html={I.bulb} /><span>{R.tip}</span></p>
+      </div>
+      <div class="ff-cta"><a class="btn btn-p" href="#kontakt" data-ffclose>Termin vereinbaren</a><a class="btn btn-s" href={`tel:${SITE.phone}`}>Anrufen</a></div>
+    </template>
+  );
+})}
+<p class="note">Eine Orientierung. Im persönlichen Gespräch finden wir gemeinsam die passende Therapie.</p>
+</div>
+</section>
+
+<section class="sec" id="therapien">
+<div class="wrap"><header class="sh rv"><p class="kicker">Therapie und Massage</p><h2 class="h2">Sieben Therapien.<br><span class="gt">Ganz auf Sie abgestimmt.</span></h2><p class="lead">Tippen Sie auf eine Karte, um <strong>mehr zu erfahren.</strong></p></header></div>
+<div class="car" id="car"><div class="car-track" id="carTrack">
+{TH.map((t, i) => (
+  <article class="tc" style={`--c:${t.c};--i:${i}`}>
+    <div class="tc-t"><span class="tc-k">{pad(i + 1)}</span><h3><button type="button" class="tc-btn" data-open={t.id}>{t.n}</button></h3><p>{t.t}</p></div>
+    <div class="tc-foot" aria-hidden="true">Mehr erfahren <Fragment set:html={I.chev} /></div>
+    <div class="tc-img"><Img src={t.img} widths={[360, 720]} width={720} height={720} sizes="360px" alt="" /></div>
+    <span class="tc-plus" aria-hidden="true"><Fragment set:html={I.plus} /></span>
+  </article>
+))}
+</div></div>
+<div class="wrap car-ctl"><div class="car-prog" id="carProg" aria-hidden="true"><i></i></div><div class="car-btns"><button type="button" class="cbtn" id="carPrev" aria-label="Vorherige Therapie"><Fragment set:html={I.chevL18} /></button><button type="button" class="cbtn" id="carNext" aria-label="Nächste Therapie"><Fragment set:html={I.chevR18} /></button></div></div>
+</section>
+
+<section class="sec bg2" id="specials">
+<div class="wrap">
+<header class="sh rv"><p class="kicker">Specials</p><h2 class="h2">Angebote, die sich <span class="gt">lohnen.</span></h2><p class="lead">Für Firmen, Stammkunden und alle, die <strong>gerne weiterempfehlen.</strong></p></header>
+<ul class="sp-tags rv"><li><Fragment set:html={I.bag} />Business-Massage</li><li><Fragment set:html={I.cal} />Termin-Abo</li><li><Fragment set:html={I.layers} />Kombi-Angebot</li><li><Fragment set:html={I.gift} />Prämie für Neukunden-Werbung</li></ul>
+<div class="sp-grid rv">{specials.map(([src, alt]) => <div class="sp"><Img src={src} widths={[300, 560]} width={560} height={560} sizes="(min-width: 1120px) 250px, (min-width: 700px) 23vw, 46vw" alt={alt} /></div>)}</div>
+</div>
+</section>
+
+<section class="sec bg2" id="kasse">
+<div class="wrap">
+<header class="sh rv"><p class="kicker">Krankenkasse</p><h2 class="h2">Kostenübernahme.<br><span class="gt">Einfach erklärt.</span></h2><p class="lead">Behandlungen können über Ihre Zusatzversicherung abgerechnet werden. <strong>Die Praxis ist beim EMR registriert.</strong></p></header>
+<div class="kasse-g">
+<ol class="steps" id="steps"><li class="steps-line" aria-hidden="true"><i id="stepsFill"></i></li>
+<li class="step"><span class="step-n" aria-hidden="true">1</span><h3>Zusatzversicherung prüfen</h3><p>Voraussetzung ist eine Zusatzversicherung in der Komplementärmedizin.</p></li>
+<li class="step"><span class="step-n" aria-hidden="true">2</span><h3>Kostengutsprache einholen</h3><p>Wir empfehlen, vor Behandlungsbeginn eine Kostengutsprache Ihrer Krankenkasse einzuholen.</p></li>
+<li class="step"><span class="step-n" aria-hidden="true">3</span><h3>Behandlung geniessen</h3><p>Bezahlt wird per Monatsrechnung oder bar in der Praxis.</p></li>
+<li class="step"><span class="step-n" aria-hidden="true">4</span><h3>Geld zurückerhalten</h3><p>Mit der Honorarrechnung bzw. dem Rückforderungsbeleg erstattet Ihnen die Zusatzversicherung die Leistung zurück.</p></li>
+</ol>
+<div class="rv">
+<div class="zsr"><small>Diese Nummer brauchen Sie für die Abklärung bei Ihrer Krankenkasse</small><div class="zsr-row"><span class="zsr-num">{SITE.zsr}</span><button type="button" class="copy-btn" id="copyZsr"><Fragment set:html={I.copy + I.ok} /><span>Kopieren</span></button></div><a href="https://emr.ch/partner" target="_blank" rel="noopener">EMR-angeschlossene Krankenkassen<Fragment set:html={I.chev} /></a></div>
+<div class="faq">
+{FAQ.map(([q, a], i) => <div class="q"><h3><button type="button" aria-expanded="false" aria-controls={`faq-${i}`}>{q}<Fragment set:html={I.down} /></button></h3><div class="a" id={`faq-${i}`}><div><p>{a}</p></div></div></div>)}
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="sec" id="ueber">
+<div class="wrap">
+<div class="about-g">
+<div class="about-ph rv"><Img id="par" src={portrait} widths={[480, 760, 1080]} width={1080} height={1080} sizes="(min-width: 960px) 500px, calc(100vw - 40px)" alt={`${SITE.owner}, Berufsmasseurin, in ihrer Praxis`} /></div>
+<div class="rv">
+<p class="kicker">Über mich</p>
+<h2 class="h2 quote">Die Kunst der Massage ist <span class="gt">meine Berufung.</span></h2>
+<div class="about-t">
+<p>Menschen abzuholen und ihnen Ruhe und Erholung zu schenken, erfüllt mich von Herzen.</p>
+<p>Nach vielen Jahren im Leistungssport und Kaderbusiness weiss ich, auf Ihre Bedürfnisse einzugehen. Die Zusammenarbeit mit Ihnen ist dabei die Grundvoraussetzung.</p>
+<p>Bei grösseren gesundheitlichen Problemen bleibe ich auch zwischen den Therapien mit Ihnen in Kontakt. So lassen sich Auswirkungen und Erfolge besser dokumentieren.</p>
+</div>
+<div class="sig"><Img src={portrait} width={96} height={96} alt="" /><div><b>Ihre {SITE.owner}</b><span>Berufsmasseurin</span></div></div>
+</div>
+</div>
+<div class="cv-g">
+<div class="cv-h rv"><h3 class="h3">Ausbildungen</h3><p>Medizinische Ausbildung in verschiedenen Massagetechniken, unter anderem bei ACOMED, der Akademie für Komplementärtherapie und -medizin.</p>
+<div class="natur"><span class="ni"><Fragment set:html={I.leaf} /></span><b>Reine Naturprodukte</b><p>Zum Einsatz kommen ausschliesslich reine Naturprodukte von Heinrich Zingg. Die richtigen Öle ergeben ein Gesamtpaket, das Beschwerden lindert.</p></div>
+</div>
+<div class="cvx" id="cvx">{cv.map((c, i) => <div class="cvc" style={`--i:${i}`}><div class="cvc-h"><span class="cvc-ic"><Fragment set:html={c.ic} /></span><span><b>{c.b}</b><small>{c.s}</small></span></div><ul class="cvc-p">{c.p.map((p, j) => { const [n, tag] = p.split('|'); return <li style={`--j:${j}`}>{n}{tag && <em>{tag}</em>}</li>; })}</ul></div>)}</div>
+</div>
+</div>
+</section>
+
+<section class="sec bg2" id="kontakt">
+<div class="wrap">
+<header class="sh rv"><p class="kicker">Kontakt</p><h2 class="h2">Ich freue mich<br><span class="gt">auf Sie.</span></h2><p class="lead">Melden Sie sich telefonisch, per WhatsApp oder <strong>per E-Mail.</strong></p></header>
+<div class="ct-g">
+<div class="card hours rv"><div class="status" id="status"><i><Fragment set:html={I.clock} /></i><span>Montag bis Freitag geöffnet</span></div><div class="week" id="week" data-hours={JSON.stringify(HOURS)} data-axis={AXIS.join(',')}>{days.map(([n, d], j) => {
+  const h = HOURS[d];
+  return <div class:list={['day', { on: h }]} data-d={d} style={`--i:${j}`} aria-label={h ? `${n}: ${hm(h[0])} bis ${hm(h[1])} Uhr` : `${n}: geschlossen`}><span class="bar">{h && <i class="seg" style={`top:${pct(h[0])}%;height:${pct(h[1]) - pct(h[0])}%`}><small>{short(h[0])}</small><small>{short(h[1])}</small></i>}</span>{n}</div>;
+})}</div><dl class="hrs">{HOURS_TEXT.map(([d, t]) => <div><dt>{d}</dt><dd>{t}</dd></div>)}</dl></div>
+<a class="card act rv" href={`tel:${SITE.phone}`}><span class="ic"><Fragment set:html={I.phone} /></span><span><small>Anrufen</small><b>{SITE.phoneDisplay}</b></span><span class="chev"><Fragment set:html={I.chevR18} /></span></a>
+<a class="card act rv" href={`https://wa.me/${SITE.phone.slice(1)}`} target="_blank" rel="noopener"><span class="ic"><Fragment set:html={I.chat} /></span><span><small>WhatsApp</small><b>Nachricht schreiben</b></span><span class="chev"><Fragment set:html={I.chevR18} /></span></a>
+<a class="card act rv" href={`mailto:${SITE.email}?subject=Kontakt%20Website`}><span class="ic"><Fragment set:html={I.mail} /></span><span><small>E-Mail</small><b>{SITE.email}</b></span><span class="chev"><Fragment set:html={I.chevR18} /></span></a>
+<div class="card mapc rv"><div class="map"><iframe loading="lazy" title={`Karte: ${SITE.street}, ${SITE.city}`} referrerpolicy="no-referrer-when-downgrade" src={`https://maps.google.com/maps?q=${mapQ}&t=m&z=17&output=embed&iwloc=near`}></iframe></div><div class="map-f"><address><b>{SITE.street}</b><span>{SITE.zip} {SITE.city}, Altstadt</span></address><div class="map-a"><button type="button" class="sbtn" id="copyAddr">Kopieren</button><a class="sbtn p" href={`https://www.google.com/maps/dir/?api=1&destination=${mapQ}`} target="_blank" rel="noopener">Route</a></div></div></div>
+</div>
+</div>
+</section>
+</main>
+
+<div class="ff-dock" id="ffDock" hidden><div class="ff-insp docked" id="ffDockInsp" role="region"></div></div>
+
+<div class="mo" id="mo" role="dialog" aria-modal="true" aria-label="Therapie"><div class="mo-bg" id="moBg"></div><div class="mo-p" id="moP"><div class="mo-top"><button type="button" class="mo-x glass" id="moX" aria-label="Schliessen"><Fragment set:html={I.x} /></button></div><div class="mo-s" id="moS"></div></div></div>
+
+<div class="mo-src" id="moSrc">
+{TH.map((t, i) => {
+  const nx = TH[(i + 1) % TH.length];
+  let k = 0;
+  const s = () => `--i:${k++}`;
+  return (
+    <article data-th={t.id} data-name={t.n}>
+      <div class="mo-hero" style={`--c:${t.c}`}><Img src={t.hero ?? t.img} widths={[640, 960, 1520]} width={1520} sizes="(min-width: 960px) 760px, 100vw" alt="" /></div>
+      <div class="mo-c" style={`--c:${t.c}`}>
+        <span class="tc-k" style={s()}>{pad(i + 1)} von 07</span>
+        <h2 style={s()}>{t.n}</h2>
+        <p class="mo-lead" style={s()}>{t.lead}</p>
+        {t.facts && <div class="mo-facts" style={s()}>{t.facts.map(([b, sp]) => <div><b>{b}</b><span>{sp}</span></div>)}</div>}
+        {t.sec?.map(([h, p]) => <section class="mo-sec" style={s()}><h3>{h}</h3><p>{p}</p></section>)}
+        {t.steps && <section class="mo-sec" style={s()}><h3>Ablauf einer Behandlung</h3><ol class="mo-steps">{t.steps.map((x) => <li>{x}</li>)}</ol></section>}
+        {t.list && <section class="mo-sec" style={s()}><h3>{t.list[0]}</h3><ul class="mo-list">{t.list[1].map((x) => <li><Fragment set:html={I.ck} /><span>{x}</span></li>)}</ul></section>}
+        {t.tips && <section class="mo-sec" style={s()}><h3>Vor und nach der Behandlung</h3><ol class="mo-steps">{t.tips.map((x) => <li>{x}</li>)}</ol></section>}
+        <div class="mo-cta" style={s()}><a class="btn btn-p" href="#kontakt" data-close>Termin vereinbaren</a><a class="btn btn-s" href={`tel:${SITE.phone}`}>Anrufen</a></div>
+        <button type="button" class="mo-next" data-next={nx.id} style={s()}><span><small>Nächste Therapie</small><b>{nx.n}</b></span><span class="go"><Fragment set:html={I.chev} /></span></button>
+      </div>
+    </article>
+  );
+})}
+</div>
+<script>import '../scripts/home';</script>
+</Base>
