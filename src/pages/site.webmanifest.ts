@@ -9,6 +9,6 @@ export async function GET() {
   }));
   return new Response(JSON.stringify({
     name: SITE.name, short_name: 'MM Therapie', lang: 'de-CH', start_url: '/', scope: '/',
-    display: 'standalone', background_color: '#FBF7F3', theme_color: '#FBF7F3', icons,
+    display: 'standalone', background_color: '#FFFAF2', theme_color: '#FFFAF2', icons,
   }), { headers: { 'Content-Type': 'application/manifest+json' } });
 }

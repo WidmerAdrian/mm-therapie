@@ -55,7 +55,7 @@ export interface Therapy {
 
 export const TH: Therapy[] = [
   {
-    id: 'trigger', n: 'Triggerpunkt-Therapie', c: '#B4553C',
+    id: 'trigger', n: 'Triggerpunkt-Therapie', c: '#C47A14',
     t: 'Wohltuend bei Verspannungen, Gelenk- und Rückenschmerzen.',
     d: 'Diese Art der Behandlung wirkt sehr wohltuend bei Verspannungen, Schmerzen innerhalb von Gelenken, Rückenschmerzen oder Einschränkungen des Bewegungsablaufes.',
     img: trigger1, hero: triggerHero,
