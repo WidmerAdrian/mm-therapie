@@ -192,76 +192,113 @@ onFrame((_, H) => {
   if (pr.bottom > 0 && pr.top < H && !RM) par.style.transform = `translateY(${(pr.top / H - .5) * -70 - 40}px)`;
 });
 
-/* body finder */
-const ff = $('#ff'), card = $('#ffCard'), stage = $('#ffStage'), sheet = $('#ffSheet'), sideInsp = $('#ffSideInsp');
+/* body finder (Straehl v4 model): figure stays put, inspector docks to the viewport on mobile */
+const ff = $('#ff'), card = $('#ffCard'), stage = $('#ffStage');
+const dock = $('#ffDock'), dockInsp = $('#ffDockInsp'), sideInsp = $('#ffSideInsp');
 const ORDER = $$('.ff-pk').map((b) => b.dataset.pick!);
 const zoneViews: Record<string, string[]> = {};
 $$('.ff .zone').forEach((z) => { const v = z.closest<HTMLElement>('.ff-fig')!.dataset.fig!; (zoneViews[z.dataset.z!] ||= []).push(v); });
 const isGen = (id: string) => !zoneViews[id];
 const wideMq = matchMedia('(min-width:960px)');
-let view = 'front', fAct: string | null = null, dir = 'fwd';
+const vib = () => navigator.vibrate?.(8);
+let view = 'front', fAct: string | null = null, preview: string | null = null, dir = 'fwd', shown: string | null = null, io: IntersectionObserver | null = null, ioT = 0;
 
+function paintZones() {
+  const hi = fAct && !isGen(fAct) ? fAct : preview;
+  $$('.ff .zone').forEach((z) => z.classList.toggle('is-active', z.dataset.z === hi));
+  $$('.ff svg.body').forEach((s) => s.classList.toggle('has-active', !!hi));
+  $$('.ff-pk').forEach((b) => b.classList.toggle('on', b.dataset.pick === preview));
+}
 function renderInsp() {
-  const box = wideMq.matches ? sideInsp : sheet;
-  (wideMq.matches ? sheet : sideInsp).replaceChildren();
-  if (!fAct) { box.replaceChildren(); return; }
-  const node = ($<HTMLTemplateElement>(`#ffz-${fAct}`)).content.cloneNode(true) as DocumentFragment;
-  node.querySelector('.ff-it')!.classList.add(dir);
-  box.replaceChildren(node);
-  if (box === sheet) sheet.scrollTop = 0;
+  const docked = !!fAct && !wideMq.matches;
+  const box = wideMq.matches ? sideInsp : dockInsp;
+  (wideMq.matches ? dockInsp : sideInsp).replaceChildren();
+  dock.hidden = !docked;
+  document.body.classList.toggle('ff-docked', docked);
+  if (!fAct) { box.replaceChildren(); shown = null; return; }
+  if (shown !== fAct || !box.childElementCount) {
+    const tpl = $<HTMLTemplateElement>(`#ffz-${fAct}`), node = tpl.content.cloneNode(true) as DocumentFragment;
+    node.querySelector('.ff-it')!.classList.add(dir);
+    box.replaceChildren(node);
+    box.setAttribute('aria-label', tpl.dataset.name!);
+    shown = fAct;
+  }
+  // auto close when the figure card scrolls mostly out of view (mobile only)
+  io?.disconnect(); clearTimeout(ioT);
+  if (docked) {
+    io = new IntersectionObserver(([e]) => { if (e.intersectionRatio < .25) { fAct = null; render(); } }, { threshold: [0, .25] });
+    ioT = window.setTimeout(() => io!.observe(card), 900);
+  }
 }
 function render(viewChanged = false) {
   ff.dataset.view = view;
   ff.classList.toggle('has', !!fAct);
   ff.classList.toggle('gen', !!fAct && isGen(fAct));
   $$('.ff-seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
-  if (viewChanged) $$('.ff-fig').forEach((f) => (f.hidden = f.dataset.fig !== view));
-  $$('.ff .zone').forEach((z) => z.classList.toggle('is-active', z.dataset.z === fAct));
-  $$('.ff svg.body').forEach((s) => s.classList.toggle('has-active', !!fAct));
+  if (viewChanged) {
+    $$('.ff-fig').forEach((f) => (f.hidden = f.dataset.fig !== view));
+    // re-run the stagger like a remount
+    for (const sel of ['.ff-pk', '.ff-chip.z']) {
+      let k = 0;
+      $$(sel).forEach((b) => { b.hidden = true; void b.offsetWidth; const on = b.dataset.pv!.split(' ').includes(view); b.hidden = !on; if (on) b.style.setProperty('--i', String(k++)); });
+    }
+  }
   $$('.ff-chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.pick === fAct)));
+  const on = $$('.ff-chip.z').find((c) => c.dataset.pick === fAct && !c.hidden), row = on?.parentElement;
+  if (on && row) row.scrollTo({ left: on.offsetLeft - row.offsetLeft - 20, behavior: RM ? 'auto' : 'smooth' });
+  paintZones();
   renderInsp();
 }
-function focusCard() {
-  if (wideMq.matches) return;
-  const r = card.getBoundingClientRect();
-  if (r.top < 56 || r.top > innerHeight * .25) scrollTo({ top: scrollY + r.top - 64, behavior: RM ? 'auto' : 'smooth' });
-}
 function pick(id: string) {
+  vib();
   ff.classList.add('touched');
   dir = 'fwd';
+  preview = null;
   fAct = fAct === id ? null : id;
-  navigator.vibrate?.(8);
   render();
-  setTimeout(focusCard, 30);
 }
 function pickAny(id: string) {
   if (!isGen(id) && !zoneViews[id].includes(view)) { view = zoneViews[id][0]; render(true); }
   pick(id);
 }
 function step(d: number) {
-  const list = ORDER.filter((id) => zoneViews[id].includes(view)), i = list.indexOf(fAct!);
+  if (!fAct || isGen(fAct)) return;
+  vib();
+  const list = ORDER.filter((id) => zoneViews[id].includes(view)), i = list.indexOf(fAct);
   dir = d > 0 ? 'fwd' : 'bwd';
   fAct = list[(i + d + list.length) % list.length];
   render();
 }
 function sw(v: string) {
   if (v === view) return;
+  vib();
   view = v;
   if (fAct && !isGen(fAct) && !zoneViews[fAct].includes(v)) fAct = null;
   render(true);
 }
-ff.addEventListener('click', (e) => {
+function close() { vib(); fAct = null; render(); }
+
+function onClick(e: Event) {
   const el = e.target as Element;
   const v = el.closest<HTMLElement>('[data-v]'); if (v) return sw(v.dataset.v!);
   const z = el.closest<HTMLElement>('.zone'); if (z) return pick(z.dataset.z!);
   const p = el.closest<HTMLElement>('[data-pick]'); if (p) return pickAny(p.dataset.pick!);
   const s = el.closest<HTMLElement>('[data-step]'); if (s) return step(+s.dataset.step!);
-  if (el.closest('[data-ffclose]')) { fAct = null; render(); }
-});
+  if (el.closest('[data-ffclose]')) close();
+}
+ff.addEventListener('click', onClick);
+dock.addEventListener('click', onClick);
 ff.addEventListener('keydown', (e) => {
   const z = (e.target as Element).closest?.('.zone') as HTMLElement | null;
   if (z && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pick(z.dataset.z!); }
 });
+// desktop: hovering or focusing a picker item previews the zone on the figure
+const pkg = $('.ff-pk-g');
+pkg.addEventListener('pointerover', (e) => { const b = (e.target as Element).closest<HTMLElement>('.ff-pk'); if (b && !fAct) { preview = b.dataset.pick!; paintZones(); } });
+pkg.addEventListener('pointerleave', () => { preview = null; paintZones(); });
+pkg.addEventListener('focusin', (e) => { const b = (e.target as Element).closest<HTMLElement>('.ff-pk'); if (b && !fAct) { preview = b.dataset.pick!; paintZones(); } });
+pkg.addEventListener('focusout', () => { preview = null; paintZones(); });
+
 stage.addEventListener('pointerdown', (e) => {
   if (!(e.target as Element).closest('.zone')) return;
   const r = stage.getBoundingClientRect(), s = document.createElement('span');
@@ -271,4 +308,31 @@ stage.addEventListener('pointerdown', (e) => {
   stage.appendChild(s);
   setTimeout(() => s.remove(), 900);
 });
-wideMq.addEventListener('change', renderInsp);
+
+// docked header gestures: drag down > 80px closes, swipe sideways > 60px steps zones
+let g: { x: number; y: number; dx: number; dy: number } | null = null;
+dockInsp.addEventListener('pointerdown', (e) => {
+  const grip = (e.target as Element).closest<HTMLElement>('.ff-grip');
+  if (!grip || (e.target as Element).closest('button,a')) return;
+  g = { x: e.clientX, y: e.clientY, dx: 0, dy: 0 };
+  dockInsp.style.transition = 'none';
+  grip.setPointerCapture(e.pointerId);
+});
+dockInsp.addEventListener('pointermove', (e) => {
+  if (!g) return;
+  const dx = e.clientX - g.x, dy = e.clientY - g.y;
+  g.dx = dx; g.dy = dy;
+  const side = Math.abs(dx) > Math.abs(dy) && fAct && !isGen(fAct) ? dx * .35 : 0;
+  dockInsp.style.transform = `translate(${side}px,${dy > 0 ? dy : dy / 5}px)`;
+});
+const release = () => {
+  if (!g) return;
+  const { dx, dy } = g;
+  g = null;
+  dockInsp.style.transition = ''; dockInsp.style.transform = '';
+  if (dy > 80) close();
+  else if (Math.abs(dx) > 60) step(dx < 0 ? 1 : -1);
+};
+dockInsp.addEventListener('pointerup', release);
+dockInsp.addEventListener('pointercancel', release);
+wideMq.addEventListener('change', () => { shown = null; renderInsp(); });

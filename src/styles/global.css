@@ -8,6 +8,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17p
 a{color:var(--tint-ink);text-decoration:none;-webkit-tap-highlight-color:transparent}a:hover{color:var(--ink)}
 img{display:block;max-width:100%}
 picture{display:contents}source{display:none}
+[hidden]{display:none!important}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:2px solid var(--tint);outline-offset:3px}
 h1,h2,h3,p{text-wrap:pretty}
@@ -416,6 +417,7 @@ h1,h2,h3,p{text-wrap:pretty}
 .hero-m{max-width:none}
 .ph{aspect-ratio:5/4}
 .ph img{object-position:center 22%}
+@media (max-width:599px){.hero-cta .btn{flex:1 1 auto}}
 @media (min-width:600px){.ph{aspect-ratio:4/5}.hero-m{max-width:440px}}
 @media (min-width:960px){.hero{padding:150px 0 50px}.hero-cta .btn{height:52px;padding:0 26px}.hero-sub{font-size:21px}}
 
