@@ -86,10 +86,10 @@
 .ff-insp:not(.docked) .ff-grip{touch-action:auto}
 .tb-wrap{transition:transform .5s var(--spring)}
 body.ff-docked .tb-wrap{transform:translateY(170%)}
-.ff-side{display:none}
+.ff-sidewrap{display:none}
 /* body figure skin */
 .ff svg .sil-fill{fill:var(--fig-fill)}
-.ff svg .sil-top path{fill:none;stroke:var(--fig-line);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;animation:ffDraw 1.7s var(--ease) .25s both}
+.ff svg .sil-top path{fill:none;stroke:var(--fig-line);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;animation:ffDraw 1s var(--ease) .1s both}
 @keyframes ffDraw{0%{stroke-dasharray:1.02 1.02;stroke-dashoffset:1.02}98%{stroke-dasharray:1.02 1.02;stroke-dashoffset:0}100%{stroke-dasharray:none}}
 .ff svg .sil-top path.sil-head-fill{fill:var(--fig-fill);stroke:none;animation:none}
 .ff svg .sil-top path.sil-face{stroke-width:1;opacity:.35;animation:none}
@@ -99,7 +99,7 @@ body.ff-docked .tb-wrap{transform:translateY(170%)}
 @media (hover:hover){.ff svg .zone:hover>g:first-child>*,.ff svg .zone:hover>g:first-child g>*{fill:var(--zone-h)}.ff svg .zone:hover .zmark-halo{animation:none;r:14px;opacity:.85}}
 .ff svg .zone.is-active>g:first-child>*,.ff svg .zone.is-active>g:first-child g>*{fill:var(--zone);animation:ffZ 2.4s ease-in-out infinite}
 @keyframes ffZ{50%{fill-opacity:.7}}
-.ff svg .zmark{pointer-events:none;transform-box:fill-box;transform-origin:center;animation:ffMk .6s var(--spring) 1.4s both}
+.ff svg .zmark{pointer-events:none;transform-box:fill-box;transform-origin:center;animation:ffMk .45s var(--spring) .3s both}
 @keyframes ffMk{from{opacity:0;transform:scale(0)}}
 .ff svg .zmark-halo{fill:rgba(180,85,60,.28);animation:ffH 2.8s var(--ease) infinite}
 .ff svg .zmark-dot{fill:var(--tint);stroke:#fff;stroke-width:1.6;transition:r .35s var(--spring)}
@@ -109,7 +109,10 @@ body.ff-docked .tb-wrap{transform:translateY(170%)}
 .ff svg.has-active .zone:not(.is-active) .zmark{opacity:.3;transition:opacity .3s}
 @media (min-width:960px){
 .ff{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 20px;align-items:stretch}
-.ff-card,.ff-side{height:calc(100svh - 140px);min-height:620px;max-height:860px}
+.ff-card{height:calc(100svh - 140px);min-height:620px;max-height:860px}
+/* wrapper = sticky containing block, so the panel stops at the end of the figure card */
+.ff-sidewrap{display:block;align-self:stretch;min-width:0}
+.ff-side{position:sticky;top:84px;max-height:calc(100svh - 140px)}
 .ff-zc{display:none}
 .ff-side{border-radius:32px;background:#fff;box-shadow:var(--sh);overflow-y:auto;overflow-x:hidden;padding:4px 20px 0;scrollbar-width:thin;display:flex;flex-direction:column;min-width:0}
 .ff-side>.ff-insp{flex:none}
@@ -120,16 +123,16 @@ body.ff-docked .tb-wrap{transform:translateY(170%)}
 .ff.has .ff-pick{display:none}
 .ff-gen{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px}
 .ff-gen .ff-lbl{margin:0}
-.ff-pick{flex:1;display:flex;flex-direction:column;min-height:0;padding:16px 0 20px}
+.ff-pick{display:flex;flex-direction:column;min-height:0;padding:16px 0 20px}
 .ff-pk-h{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--tint);color:#fff}
 .ff-pk-ic{position:relative;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.18);flex:none}
 .ff-pk-ic::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #fff;animation:ffP 2s var(--ease) infinite}
 .ff-pk-ic svg{animation:ffW 2.6s var(--ease) infinite}
 .ff-pk-h b{display:block;font-size:18px;font-weight:750;letter-spacing:-.03em}.ff-pk-h small{font-size:13px;opacity:.92}
-.ff-pk-g{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:8px;margin-top:10px;min-height:0}
-.ff-pk{display:flex;align-items:center;gap:10px;min-width:0;padding:9px 10px;border-radius:16px;background:var(--bg2);text-align:left;animation:ffRise .5s var(--spring) both;animation-delay:calc(.1s + var(--i)*.035s);transition:background .25s,transform .45s var(--spring),box-shadow .25s}
+.ff-pk-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:10px}
+.ff-pk{display:flex;align-items:center;gap:10px;min-width:0;min-height:56px;padding:9px 10px;border-radius:16px;background:var(--bg2);text-align:left;animation:ffRise .5s var(--spring) both;animation-delay:calc(.1s + var(--i)*.035s);transition:background .25s,transform .45s var(--spring),box-shadow .25s}
 .ff-pk:hover,.ff-pk.on{background:var(--tint-fill);box-shadow:inset 0 0 0 1.5px var(--tint);transform:translateY(-2px)}.ff-pk:active{transform:scale(.96)}
 .ff-pk-n{display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:10px;background:#fff;color:var(--tint-ink);font-size:12.5px;font-weight:750;transition:background .25s,color .25s,transform .45s var(--spring)}
 .ff-pk:hover .ff-pk-n,.ff-pk.on .ff-pk-n{background:var(--tint);color:#fff;transform:rotate(-8deg) scale(1.08)}
-.ff-pk-l{display:flex;flex-direction:column;min-width:0}.ff-pk-l b{font-size:14px;font-weight:650;line-height:1.2}.ff-pk-l small{font-size:12.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ff-pk-l{display:flex;flex-direction:column;min-width:0}.ff-pk-l b{font-size:14px;font-weight:650;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ff-pk-l small{font-size:12.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }

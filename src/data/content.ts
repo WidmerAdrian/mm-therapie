@@ -36,12 +36,6 @@ export const HOURS: Record<number, [number, number]> = {
   5: [420, 1170],
 };
 export const hm = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
-export const HOURS_TEXT: [string, string][] = [
-  ['Montag', '07:00 bis 18:00 Uhr'],
-  ['Dienstag', '08:00 bis 19:00 Uhr'],
-  ['Mittwoch bis Freitag', '07:00 bis 19:30 Uhr'],
-  ['Samstag und Sonntag', 'geschlossen'],
-];
 
 export interface Therapy {
   id: string;

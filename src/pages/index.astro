@@ -8,7 +8,7 @@ import sp30 from '../assets/img/special-30.png';
 import sp15 from '../assets/img/special-15.png';
 import sp29 from '../assets/img/special-29.png';
 import sp21 from '../assets/img/special-21.png';
-import { SITE, TH, BY, MMR, ORDER, GEN, FAQ, HOURS, HOURS_TEXT, hm } from '../data/content';
+import { SITE, TH, BY, MMR, ORDER, GEN, FAQ, HOURS, hm } from '../data/content';
 import { I } from '../data/icons';
 import '../styles/finder.css';
 
@@ -32,12 +32,11 @@ const cv = [
   { ic: I.drop, b: 'Reflexzonen und Lymphe', s: 'Sanft und ganzheitlich', p: ['Fussreflexzonenmassage|ACOMED', 'Manuelle Lymphdrainage'] },
   { ic: I.cap, b: 'Grundlagen', s: 'Das medizinische Fundament', p: ['Medizinische Grundlagen', 'Grenzenlos Modul 1 bis 3'] },
 ];
-const days = [['Mo', 1], ['Di', 2], ['Mi', 3], ['Do', 4], ['Fr', 5], ['Sa', 6], ['So', 0]] as const;
+const days = [['Montag', 1], ['Dienstag', 2], ['Mittwoch', 3], ['Donnerstag', 4], ['Freitag', 5], ['Samstag', 6], ['Sonntag', 0]] as const;
 const pad = (n: number) => String(n).padStart(2, '0');
-// timeline axis for the week bars: 06:30 to 20:00
-const AXIS = [390, 1200];
+// track axis for the opening hours rows: 07:00 to 19:30
+const AXIS = [420, 1170];
 const pct = (m: number) => ((m - AXIS[0]) / (AXIS[1] - AXIS[0])) * 100;
-const short = (m: number) => (m % 60 ? hm(m) : String(m / 60));
 const mapQ = encodeURIComponent(`${SITE.street}, ${SITE.zip} ${SITE.city}`);
 
 const jsonld = [
@@ -73,8 +72,8 @@ const jsonld = [
 <div class="wrap hero-g">
 <div class="hero-t">
 <p class="kicker"><Fragment set:html={I.pin} />Massagepraxis in der Altstadt Zofingen</p>
-<h1 class="h1"><span class="w" style="--i:0">Spüren</span> <span class="w" style="--i:1">Sie</span> <span class="w" style="--i:2">wieder</span><br><span class="gt w" style="--i:3">Leichtigkeit.</span></h1>
-<p class="hero-sub">Schön, dass Sie da sind. Ob bei Schmerzen oder einfach zum Entspannen: <strong>Hier darf Ihr Körper zur Ruhe kommen.</strong></p>
+<h1 class="h1"><span class="w" style="--i:0">Massage,</span> <span class="w" style="--i:1">die</span><br><span class="gt w" style="--i:2">gut</span> <span class="gt w" style="--i:3">tut.</span></h1>
+<p class="hero-sub">Medizinische und klassische Massage in Zofingen. Mit erfahrenen Händen gegen Verspannungen und Schmerzen, oder einfach <strong>für eine Stunde nur für Sie.</strong></p>
 <div class="hero-cta"><a class="btn btn-p" href="#kontakt">Termin vereinbaren</a><a class="btn btn-s" href="#finder">Was hilft mir? <Fragment set:html={I.chev18} /></a></div>
 <ul class="trust"><li><Fragment set:html={I.check16} />Krankenkasse anerkannt</li><li><Fragment set:html={I.check16} />Parkplätze vor Ort</li><li><Fragment set:html={I.check16} />Mo bis Fr geöffnet</li></ul>
 </div>
@@ -113,10 +112,10 @@ const jsonld = [
 </div>
 <div class="ff-pill" aria-hidden="true"><Fragment set:html={I.tap} />Auf eine Stelle tippen</div>
 </div>
-<div class="ff-side" id="ffSide">
+<div class="ff-sidewrap"><div class="ff-side" id="ffSide">
 <div class="ff-pick"><div class="ff-pk-h"><span class="ff-pk-ic"><Fragment set:html={I.tap} /></span><span><b>Wo tut es weh?</b><small>Zeigen Sie auf eine Stelle, sie leuchtet am Körper auf.</small></span></div><div class="ff-pk-g">{ORDER.map((id, i) => <button type="button" class="ff-pk" style={`--i:${i}`} data-pick={id} data-pv={MMR[id].v!.join(' ')} hidden={!MMR[id].v!.includes('front')}><span class="ff-pk-n">{pad(i + 1)}</span><span class="ff-pk-l"><b>{MMR[id].n}</b><small>{MMR[id].s[0]}</small></span></button>)}</div></div>
 <div class="ff-insp" id="ffSideInsp" role="region"></div>
-</div>
+</div></div>
 <div class="ff-zc"><span class="ff-lbl">Oder Stelle wählen</span><div class="ff-chips">{ORDER.map((id, i) => <button type="button" class="ff-chip z" style={`--i:${i}`} data-pick={id} data-pv={MMR[id].v!.join(' ')} aria-pressed="false" hidden={!MMR[id].v!.includes('front')}><b>{pad(i + 1)}</b>{MMR[id].n}</button>)}</div></div>
 <div class="ff-gen"><span class="ff-lbl">Oder eher allgemein?</span><div class="ff-chips">{GEN.map((id, i) => <button type="button" class="ff-chip" style={`--i:${i}`} data-pick={id} aria-pressed="false">{MMR[id].n}</button>)}</div></div>
 </div>
@@ -218,8 +217,8 @@ const jsonld = [
 <div class="ct-g">
 <div class="card hours rv"><div class="status" id="status"><i><Fragment set:html={I.clock} /></i><span>Montag bis Freitag geöffnet</span></div><div class="week" id="week" data-hours={JSON.stringify(HOURS)} data-axis={AXIS.join(',')}>{days.map(([n, d], j) => {
   const h = HOURS[d];
-  return <div class:list={['day', { on: h }]} data-d={d} style={`--i:${j}`} aria-label={h ? `${n}: ${hm(h[0])} bis ${hm(h[1])} Uhr` : `${n}: geschlossen`}><span class="bar">{h && <i class="seg" style={`top:${pct(h[0])}%;height:${pct(h[1]) - pct(h[0])}%`}><small>{short(h[0])}</small><small>{short(h[1])}</small></i>}</span>{n}</div>;
-})}</div><dl class="hrs">{HOURS_TEXT.map(([d, t]) => <div><dt>{d}</dt><dd>{t}</dd></div>)}</dl></div>
+  return <div class:list={['hr', { on: h }]} data-d={d} style={`--i:${j}`}><span class="hr-d">{n}</span><span class="hr-t">{h ? `${hm(h[0])} bis ${hm(h[1])}` : 'Geschlossen'}</span>{h && <span class="hr-tr" aria-hidden="true"><i style={`left:${pct(h[0])}%;right:${100 - pct(h[1])}%`}></i></span>}</div>;
+})}</div></div>
 <a class="card act rv" href={`tel:${SITE.phone}`}><span class="ic"><Fragment set:html={I.phone} /></span><span><small>Anrufen</small><b>{SITE.phoneDisplay}</b></span><span class="chev"><Fragment set:html={I.chevR18} /></span></a>
 <a class="card act rv" href={`https://wa.me/${SITE.phone.slice(1)}`} target="_blank" rel="noopener"><span class="ic"><Fragment set:html={I.chat} /></span><span><small>WhatsApp</small><b>Nachricht schreiben</b></span><span class="chev"><Fragment set:html={I.chevR18} /></span></a>
 <a class="card act rv" href={`mailto:${SITE.email}?subject=Kontakt%20Website`}><span class="ic"><Fragment set:html={I.mail} /></span><span><small>E-Mail</small><b>{SITE.email}</b></span><span class="chev"><Fragment set:html={I.chevR18} /></span></a>

@@ -156,8 +156,9 @@ br.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefau
   const nxt = (k === 0 ? 'heute' : k === 1 ? 'morgen' : names[nd]) + at;
   const day = $(`#week [data-d="${d}"]`);
   day.classList.add('today');
+  day.querySelector('.hr-d')!.insertAdjacentHTML('beforeend', '<em>Heute</em>');
   const [x0, x1] = week.dataset.axis!.split(',').map(Number);
-  if (m > x0 && m < x1) day.querySelector('.bar')!.insertAdjacentHTML('beforeend', `<span class="now" style="top:${(m - x0) / (x1 - x0) * 100}%"></span>`);
+  if (isOpen) day.querySelector('.hr-tr')!.insertAdjacentHTML('beforeend', `<span class="hr-now" style="left:${(m - x0) / (x1 - x0) * 100}%"></span>`);
   const pc = isOpen ? '#34C759' : '#FF9F0A', st = $('#status');
   st.style.setProperty('--pc', pc);
   st.querySelector('span')!.textContent = isOpen ? `Jetzt geöffnet, bis ${hm(today[1])} Uhr` : 'Geschlossen, wieder ' + nxt;

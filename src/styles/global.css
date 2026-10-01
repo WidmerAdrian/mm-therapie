@@ -258,18 +258,22 @@ h1,h2,h3,p{text-wrap:pretty}
 .card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px}
 .status{display:inline-flex;align-items:center;gap:10px;font-size:16px;font-weight:600}
 .status i{width:28px;height:28px;border-radius:50%;background:var(--pc,#34C759);color:#fff;display:grid;place-items:center}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:18px 0 16px}
-.day{display:grid;justify-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink3)}
-.day .bar{width:100%;height:112px;border-radius:12px;background:var(--bg2);position:relative;overflow:hidden}
-.seg{position:absolute;left:0;right:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:5px 0;border-radius:10px;background:var(--tint);color:#fff;font-style:normal;transform:scaleY(0);transform-origin:top;transition:transform 1.1s var(--spring);transition-delay:calc(var(--i)*90ms)}
-.seg small{font-size:10.5px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.02em}
-.week.in .seg,.no-js .seg{transform:none}
-.day.today{color:var(--ink)}
-.day.today .bar{box-shadow:0 0 0 2px var(--tint-ink)}
-.now{position:absolute;left:3px;right:3px;height:2px;background:var(--ink);border-radius:2px;z-index:2;box-shadow:0 0 6px rgba(0,0,0,.3)}
-.hrs{display:grid;gap:4px;font-size:15px;color:var(--ink2)}
-.hrs div{display:flex;justify-content:space-between;gap:12px}
-.hrs dd{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+/* opening hours as a list, open span on a 07:00 to 19:30 track */
+.week{margin:16px 0 4px;border-top:1px solid var(--line)}
+.hr{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;padding:11px 4px;border-bottom:1px solid var(--line);font-size:15px;opacity:0;transform:translateY(8px);transition:opacity .5s var(--ease),transform .6s var(--spring);transition-delay:calc(var(--i)*60ms)}
+.week.in .hr,.no-js .hr{opacity:1;transform:none}
+.hr-d{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--ink)}
+.hr-d em{font-style:normal;font-size:11.5px;font-weight:700;color:#fff;background:var(--tint);padding:2px 8px;border-radius:999px}
+.hr-t{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+.hr:not(.on) .hr-d,.hr:not(.on) .hr-t{color:var(--ink3);font-weight:500}
+.hr-tr{grid-column:1/-1;position:relative;height:6px;border-radius:6px;background:var(--bg2);margin-top:4px}
+.hr-tr i{position:absolute;top:0;bottom:0;border-radius:inherit;background:var(--tint-fill);transform-origin:left;transform:scaleX(0);transition:transform 1s var(--ease);transition-delay:calc(var(--i)*60ms + .2s)}
+.week.in .hr-tr i,.no-js .hr-tr i{transform:none}
+.hr.today .hr-tr i{background:var(--tint)}
+.hr.today{background:color-mix(in oklab,var(--tint-fill) 45%,transparent);border-radius:12px;padding-inline:10px;margin:0 -6px;border-bottom-color:transparent}
+.hr-now{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#fff;border:3px solid var(--tint-ink);box-shadow:0 2px 6px rgba(60,30,15,.3)}
+.hr-now::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--tint);animation:ping 2s ease-out infinite}
+@keyframes ping{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.4);opacity:0}}
 .act{display:grid;grid-template-columns:48px minmax(0,1fr) 20px;align-items:center;gap:14px;color:var(--ink);transition:transform .55s var(--spring),box-shadow .4s}
 .act:hover{color:var(--ink);transform:scale(1.02);box-shadow:0 0 0 .5px var(--line),0 18px 36px -24px rgba(0,0,0,.3)}
 .act:active{transform:scale(.97);transition-duration:.15s}
